@@ -1,0 +1,64 @@
+{
+  "id": null,
+  "title": "Monitoramento de Link - CI/CD",
+  "timezone": "browser",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "5s",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Velocidade de Download",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "download_speed_mbps",
+          "legendFormat": "Download (Mbps)",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Velocidade de Upload",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "upload_speed_mbps",
+          "legendFormat": "Upload (Mbps)",
+          "refId": "B"
+        }
+      ],
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Lat\u00eancia (Ping)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "ping_latency_ms",
+          "legendFormat": "Ping (ms)",
+          "refId": "C"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 24,
+        "h": 8
+      }
+    }
+  ]
+}

@@ -2,6 +2,7 @@ from fastapi import FastAPI, Response
 from prometheus_client import Gauge, generate_latest, CONTENT_TYPE_LATEST
 import speedtest
 import threading
+import time
 
 app = FastAPI()
 
@@ -10,23 +11,26 @@ upload_gauge = Gauge("internet_upload_speed_mbps", "Upload speed in Mbps")
 ping_gauge = Gauge("internet_ping_ms", "Ping in ms")
 
 def run_speedtest():
-    try:
-        st = speedtest.Speedtest()
-        st.get_best_server()
-        download = st.download() / 1_000_000
-        upload = st.upload() / 1_000_000
-        ping = st.results.ping
+    while True:
+        try:
+            st = speedtest.Speedtest()
+            st.get_best_server()
+            download = st.download() / 1_000_000
+            upload = st.upload() / 1_000_000
+            ping = st.results.ping
 
-        download_gauge.set(round(download, 2))
-        upload_gauge.set(round(upload, 2))
-        ping_gauge.set(round(ping, 2))
-    except Exception as e:
-        print(f"Erro no speedtest: {e}")
+            download_gauge.set(round(download, 2))
+            upload_gauge.set(round(upload, 2))
+            ping_gauge.set(round(ping, 2))
 
-@app.get("/")
-def index():
-    threading.Thread(target=run_speedtest).start()
-    return {"message": "Speedtest iniciado!"}
+            print("Métricas atualizadas.")
+        except Exception as e:
+            print(f"Erro no speedtest: {e}")
+        time.sleep(600)  # a cada 10 minutos
+
+@app.on_event("startup")
+def start_background_task():
+    threading.Thread(target=run_speedtest, daemon=True).start()
 
 @app.get("/metrics")
 def metrics():
